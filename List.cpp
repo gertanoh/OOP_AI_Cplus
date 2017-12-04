@@ -44,7 +44,7 @@ bool List::find(StatePtr s) const
 }
 /*
  * insert element in deque
- * depending on the type of list 
+ * depending on the type of list
  * either front or back
  */
 bool List::insert(StatePtr s)
@@ -63,7 +63,7 @@ bool List::insert(StatePtr s)
         m_states.push_back(std::move(s) );
         ret = true;
     }
-    else if( m_type == List_Type::QUEUE ) 
+    else if( m_type == List_Type::QUEUE )
     {
         m_states.push_front(std::move(s) );
         ret = true;
@@ -73,7 +73,7 @@ bool List::insert(StatePtr s)
         cout <<"Error, unexpected behaviour in insert from type of list " << endl;
     }
     return ret;
-        
+
 }
 
 bool List::empty() const
@@ -86,11 +86,11 @@ int List::size() const
 }
 StatePtr List::acquire()
 {
-    
+
     StatePtr s = m_states.front();
     m_indexStates.erase(s);
     m_states.pop_front();
-    
+
     return s;
 }
 int List::getLevel() const
@@ -115,7 +115,7 @@ ostream& operator<< (ostream &out, const List &l)
 #ifdef DEBUG
 int main()
 {
-    
+
     return 0;
 }
 

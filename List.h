@@ -33,7 +33,7 @@ using std::ostream;
 using StatePtr = State*;
 struct StateComparator
 {
-   bool operator() 
+   bool operator()
         (const StatePtr &s1, const StatePtr &s2) const;
 };
 struct StateHasher
@@ -48,29 +48,30 @@ enum class List_Type
     QUEUE
 };
 
+// TODO change StatePtr to std:.shared_ptr
 class List
 {
 private:
-    
+
     // store pointers to objects
     deque<StatePtr > m_states;
     // container for constant time functions
     unordered_set<StatePtr, StateHasher, StateComparator> m_indexStates;
-    
+
     int m_min_cost;
     int m_max_level_reached;
     List_Type m_type;
 
-    
+
 public:
-    
+
     // default and empty constructor
     List(List_Type type);
-    
+
     // no copy constructor and assignment constructor
     List (const List& ) = delete;
     List& operator=(const List& ) = delete;
-    
+
     bool find(StatePtr s) const;
     bool insert(StatePtr s);
     bool empty() const;
