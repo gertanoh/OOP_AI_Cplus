@@ -1,0 +1,4 @@
+# Ignore object files
+*.o
+# Add exec to executables files
+*.exec
