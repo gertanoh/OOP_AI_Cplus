@@ -16,36 +16,42 @@ int main()
     State test2(goal);
     State test(test_1);
     cout <<"Goal State :" << goal << endl;
-    
+
     cout <<"Goal is equal to test_2: "<< ((goal == test2) ? "Yes": "No") << endl;
     cout <<"test_1 is equal to test_2: "<< ((test_1 == test2) ? "Yes": "No") << endl;
-    
+
     cout <<"test State :" << test << endl;
-    int ret = 0; 
+    int ret = 0;
     States_values v = generateChildren(test, ret);
     if (!ret)
     {
         for (unsigned int i= 0 ; i<v.size(); ++i)
         {
-            cout <<"Vector "<< i << ": ";
+            // cout <<"Vector "<< i << ": ";
+            auto tmp = v[i];
+            // need of static cast to integer for unscoped
+            // enum
+            cout <<"Move: " << static_cast<int>(tmp.first)<<", ";
+            auto tmp_vec = tmp.second;
             for (int j = 0 ; j <9; ++j)
             {
-                cout << v[i][j]<<",";
+
+                cout << tmp_vec[j]<<",";
             }
             cout << endl;
         }
     }
-    else 
+    else
     {
         cout <<"Error in generateChildren " << endl;
     }
-    
+
     // test parent
     cout <<"test2 State :" << test2 << endl;
     State test4(test_4, 2, Move::DOWN, &test2);
     State* ptr = test4.getParent();
     cout <<"test2 State ptr :" << *ptr << endl;
+
+
     return 0;
 }
-
-

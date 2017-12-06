@@ -1,6 +1,7 @@
 // ListTest.cpp
 
 #include <iostream>
+#include <memory>
 #include "List.h"
 
 using std::cout;
@@ -13,10 +14,10 @@ void testFind();
 void testAcquire();
 int main()
 {
-    
+
     testCreation();
-    testInsert();
     testFind();
+    testInsert();
     testAcquire();
     return 0;
 }
@@ -32,8 +33,8 @@ void testInsert()
     cout <<"Test creation " << endl;
     List l(List_Type::STACK);
     vector<int> test_1{1,2,5,3,4,0,6,7,8};
-    State test(test_1);
-    bool ret = l.insert(&test);
+    auto test = std::make_shared<State>(test_1);
+    bool ret = l.insert(test);
     if (ret)
     {
         cout <<"ok " << endl;
@@ -50,13 +51,14 @@ void testFind()
     List l(List_Type::STACK);
     vector<int> test_1{1,2,5,3,4,0,6,7,8};
     vector<int> test_2{3,1,2,0,4,5,6,7,8};
-    State test1(test_1);
-    State test2(test_2);
-    bool ret = l.insert(&test2);
+    auto test1 = std::make_shared<State>(test_1);
+    auto test2 = std::make_shared<State>(test_2);
+    bool ret = l.insert(test2);
     if (ret)
     {
-        cout << "Test insertion:" <<( (l.find(&test2) )? "Ok": "Fail" )<< endl;
-        cout << "Test non nsertion:" <<( (l.find(&test1) )? "Ok": "Fail") << endl;
+        cout << "Test insertion:" <<( (l.find(test2) )? "Ok": "Fail" )<< endl;
+        cout << "Test non insertion:" <<( (l.find(test1) )? "Ok": "Fail") << endl;
+        cout <<"Ownership Test: "<< test2.use_count() << endl;
     }
     else
     {
@@ -65,20 +67,20 @@ void testFind()
 }
 
 void testAcquire()
-{   
+{
     cout <<"Test Acquire " << endl;
     List l(List_Type::STACK);
     vector<int> test_1{1,2,5,3,4,0,6,7,8};
-    State test1(test_1);
-    bool ret = l.insert(&test1);
+    auto test1 = std::make_shared<State>(test_1);
+    bool ret = l.insert(test1);
     if (ret)
     {
         StatePtr s = l.acquire();
-        cout << "testAcquire:" <<( (*s == test1)? "Ok": "Fail" ) << endl;
+        cout << "element just pop out: " << *s.get() << endl;
+        cout << "testAcquire:" <<( (*s.get() == *test1.get())? "Ok": "Fail" ) << endl;
     }
     else
     {
         cout <<"Fail due to failure in test insertion" << endl;
     }
 }
-    

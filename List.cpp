@@ -34,11 +34,15 @@ List::List(List_Type type): m_min_cost(0), m_max_level_reached(0),
                             m_type(type)
 {
 }
+// List::~List()
+// {
+//   cout <<"default destructor called" << endl;
+// }
 
 /*
  * check if node alredy present in list
  */
-bool List::find(StatePtr s) const
+bool List::find(const StatePtr& s) const
 {
     return (m_indexStates.find(s) != m_indexStates.end() );
 }
@@ -47,7 +51,7 @@ bool List::find(StatePtr s) const
  * depending on the type of list
  * either front or back
  */
-bool List::insert(StatePtr s)
+bool List::insert(const StatePtr& s)
 {
     // update depth of list
     bool ret = false;
@@ -60,12 +64,12 @@ bool List::insert(StatePtr s)
     if (m_type == List_Type::STACK )
     {
         // possibility to use std::move
-        m_states.push_back(std::move(s) );
+        m_states.push_front(s);
         ret = true;
     }
     else if( m_type == List_Type::QUEUE )
     {
-        m_states.push_front(std::move(s) );
+        m_states.push_back(s);
         ret = true;
     }
     else
@@ -75,25 +79,38 @@ bool List::insert(StatePtr s)
     return ret;
 
 }
-
-bool List::empty() const
+bool List::empty(void) const
 {
     return m_indexStates.empty();
 };
-int List::size() const
+int List::size(void) const
 {
     return m_states.size();
 }
-StatePtr List::acquire()
+List_Type List::getType(void)
 {
-
-    StatePtr s = m_states.front();
+  return m_type;
+}
+int List::getMaxDepth(void)
+{
+  return m_max_level_reached;
+}
+StatePtr List::acquire(void)
+{
+    /* It is okay as we transfer
+     * Ownership and pop right after
+     */
+    StatePtr s = std::move(m_states.front());
     m_indexStates.erase(s);
     m_states.pop_front();
 
     return s;
 }
-int List::getLevel() const
+StatePtr List::top(void)
+{
+  return m_states.front();
+}
+int List::getLevel(void) const
 {
     return m_max_level_reached;
 }
@@ -107,7 +124,7 @@ ostream& operator<< (ostream &out, const List &l)
     out <<"List size is " << size << std::endl;
     for (int i = 0 ; i <size; ++i)
     {
-        out<<"State:"<< *(l.getStates()[i]);
+        out<<"State:"<< *(l.getStates()[i]).get();
     }
     return out;
 };

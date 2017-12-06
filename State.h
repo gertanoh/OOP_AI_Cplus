@@ -10,12 +10,14 @@
 
 #include <iostream>
 #include <vector>
+#include <utility>
+#include <functional>
 
 
 
 using std::vector;
 using std::ostream;
-
+using std::pair;
 // differents moves available
 enum class Move
 {
@@ -27,46 +29,47 @@ enum class Move
 
 class State
 {
-    
+
 
 private:
-    
+
     vector<int> m_values;
     int m_level;
     Move m_to_state;
     int m_heuristic_score;
     /* Parent pointer */
+    //TODO change to std::shared_ptr
     State* parentPtr;
     /* to calculate heuristic score of the state */
-    void heuristic_function();                  
-    
-    
+    void heuristic_function(void);
+
+
 public:
-    
+
     // default constructor
-    State();                                    
+    State();
     // create a state with values and default values for all other parameters
-    State(vector<int> values); 
+    State(vector<int> values);
     // create a state initialized with parameter
-    State(vector<int> values, int level, Move m, State* ptr); 
-    
+    State(vector<int> values, int level, Move m, State* ptr);
+
     // No need to declare specified copy and assign constructor
-    
-    
+
+
     // getters
     const vector<int>& getValues() const;
     // get by value
     vector<int> getValues_copy() const;
-    int getLevel() const ;
-    Move getMove() const ;
-    int getHeuristic() const ;
+    int getLevel() const;
+    Move getMove() const;
+    int getHeuristic() const;
     State* getParent() const;
-    
+
     friend ostream& operator<< (ostream &out, const State &s);
 };
 
 //
-using States_values = vector<vector<int> >;
+using States_values = vector< pair<Move, vector<int>> >;
 States_values generateChildren(const State& father, int &ret);
 
 bool operator== (const State& s1, const State& s2);
@@ -74,8 +77,6 @@ bool operator!= (const State& s1, const State& s2);
 bool operator> (const State& s1, const State& s2);
 
 
-    
-    
+
+
 #endif
-
-
