@@ -11,22 +11,52 @@ using std::cout;
 using std::endl;
 
 
+Map manhattan_distance()
+{
+  Map m;
+  int index1 = -1;
+  int n0 = 3;
+  for (int i = 0; i <n0; ++i)
+  {
+    for (int j = 0; j <n0; ++j)
+    {
+      index1 += 1;
+      int index2 = -1;
+      for (int k = 0; k <n0; ++k)
+      {
+        for (int l = 0; l <n0; ++l)
+        {
+          index2 += 1;
+          std::string str = std::to_string(index1)
+          +std::to_string(index2);
+          m.insert(std::make_pair(str, abs(i-k)+abs(j-l)) );
+        }
+      }
+    }
+  }
+
+  return m;
+}
+
+
+Map State::man_distance = manhattan_distance();
+
 /* calculate heuristic_function
  * return void
  */
 void State::heuristic_function(void)
 {
-    // misplaced tiles
-    vector<int> goal_state{0,1,2,3,4,5,6,7,8};
-    int result = 0;
-    for (unsigned int i = 0; i < goal_state.size(); ++i)
+  // manhattan distance heuristic
+  for (int i = 0; i <9; ++i)
+  {
+    // do not count 0 tile
+    if ( !(m_values[i] == 0) )
     {
-        if (goal_state[i] != m_values[i] )
-        {
-            result += 1;
-        }
+      std::string str = std::to_string(i)+
+      std::to_string(m_values[i]);
+      m_heuristic_score += man_distance[str];
     }
-    m_heuristic_score = result;
+  }
 }
 
 State::State() = default;
@@ -36,6 +66,7 @@ State::State(vector<int> values):m_values(values),
 {
     // default initialization of m_to_state is UP
     m_to_state = Move::UP;
+    heuristic_function();
 }
 
 // constructor used to expand the tree search
@@ -44,6 +75,7 @@ State::State(vector<int> values, int level, Move m, State* ptr):
 {
     // no need to check pointer here
     parentPtr = ptr;
+    m_heuristic_score = 0;
     heuristic_function();
     m_heuristic_score += m_level;
 }

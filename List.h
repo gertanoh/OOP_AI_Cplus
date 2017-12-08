@@ -27,12 +27,14 @@
 #include <deque>
 #include <unordered_set>
 #include <memory>
+#include <queue>
 #include "State.h"
 
 using std::vector;
 using std::deque;
 using std::unordered_set;
 using std::ostream;
+
 
 
 using StatePtr = std::shared_ptr<State>;
@@ -53,7 +55,6 @@ enum class List_Type
     QUEUE
 };
 
-// TODO change StatePtr to std:.shared_ptr
 class List
 {
 private:
@@ -64,7 +65,6 @@ private:
     // container for constant time functions
     unordered_set<StatePtr, StateHasher, StateComparator > m_indexStates;
 
-    int m_min_cost;
     int m_max_level_reached;
     List_Type m_type;
 
@@ -99,5 +99,6 @@ public:
     const deque<StatePtr>& getStates() const;
     friend ostream& operator<< (ostream &out, const List &l);
 };
+
 
 #endif

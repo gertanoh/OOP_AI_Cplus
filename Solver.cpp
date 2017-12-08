@@ -20,7 +20,7 @@ using std::string;
  * Implement a template container
  * to add a star functionality
  * and code duplication
- * Implement mahanttan distance
+ * Implement mah
  */
 
 Solver::Solver(List_Type type): frontier(type), explored(List_Type::STACK),

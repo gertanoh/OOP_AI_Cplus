@@ -11,13 +11,16 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-#include <functional>
+#include <map>
+#include <string>
 
 
 
 using std::vector;
 using std::ostream;
 using std::pair;
+using Map = std::map<std::string, int> ;
+
 // differents moves available
 enum class Move
 {
@@ -38,7 +41,6 @@ private:
     Move m_to_state;
     int m_heuristic_score;
     /* Parent pointer */
-    //TODO change to std::shared_ptr
     State* parentPtr;
     /* to calculate heuristic score of the state */
     void heuristic_function(void);
@@ -46,6 +48,7 @@ private:
 
 public:
 
+    static Map man_distance;
     // default constructor
     State();
     // create a state with values and default values for all other parameters

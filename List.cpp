@@ -30,7 +30,7 @@ std::size_t  StateHasher::operator() (const StatePtr s) const
     return seed;
 }
 
-List::List(List_Type type): m_min_cost(0), m_max_level_reached(0),
+List::List(List_Type type):  m_max_level_reached(0),
                             m_type(type)
 {
 }
@@ -100,7 +100,7 @@ StatePtr List::acquire(void)
     /* It is okay as we transfer
      * Ownership and pop right after
      */
-    StatePtr s = std::move(m_states.front());
+    StatePtr s = m_states.front();
     m_indexStates.erase(s);
     m_states.pop_front();
 
