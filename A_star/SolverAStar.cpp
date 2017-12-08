@@ -138,7 +138,7 @@ private:
   	auto loop_ptr = (explored.top()).get();
   	// cout <<"State from path_to_goal:" << *(loop_ptr) << endl;
     // explored can be empty if first state is goal
-    if (!loop_ptr)
+    if (loop_ptr->getLevel() != 0)
     {
       m_search_depth = loop_ptr->getLevel();
     	/* from father pointer
@@ -150,7 +150,6 @@ private:
     		 m_path_to_goal.push_back(loop_ptr->getMove());
     		 // point to father
     		 loop_ptr = loop_ptr->getParent();
-    		//  cout <<"Before while " << endl;
     	 }
     	 while (loop_ptr->getLevel() != 0);
     }
@@ -167,7 +166,7 @@ private:
   int numInver(vector<int> values)
   {
       int inv_count = 0;
-      for (int i = 0; i < 9 - 1; i++)
+      for (int i = 0; i < 8; i++)
       {
         for (int j = i+1; j < 9; j++)
         {
@@ -203,28 +202,17 @@ public:
   bool solve(vector<int> values)
   {
 
-    // check if board is solvable
-    // bool solvable = isSolvable(values);
-    // if (!solvable)
-    // {
-    //   cout <<"Board is not solvable"<<endl;
-    //   return false;
-    // }
-  	// start chrono
   	auto start = std::chrono::system_clock::now();
   	int ret = 0;
     vector<int> goal;
     // get inversion to know which goal state can be reached
     int inv = numInver(values);
-    cout <<"Inv counts:"<<inv << std::endl;
     if (inv%2 == 0)
     {
-      cout <<"Goal even state "<<endl;
       goal = {0,1,2,3,4,5,6,7,8};
     }
     else
     {
-      cout <<"Goal odd state "<<endl;
       goal = {1,2,3,8,0,4,7,6,5};
     }
 
@@ -322,24 +310,30 @@ public:
   }
 
 };
-const vector<vector<int>> tests {{1,2,5,3,4,0,6,7,8},
+const vector<vector<int>> testsEven {{1,2,5,3,4,0,6,7,8},
 													 			{6,1,8,4,0,2,7,3,5},
 													 			{8,6,4,2,1,3,5,7,0},
 													 			{3,1,2,0,4,5,6,7,8}};
 
-const vector<vector<int>> testsNot {{1,2,3,8,0,4,7,6,5},
+const vector<vector<int>> testsOdd {{1,2,3,8,0,4,7,6,5},
 													 			    {1,3,4,8,6,2,7,0,5},
 					 			                    {2,8,1,4,6,3,0,7,5},
 													 			    {5,6,7,4,0,8,3,2,1}};
 
-void testCases(void)
+const vector<vector<int>> testsOther {{8,6,7,2,5,4,3,0,1},
+													 			    {6,4,7,8,5,0,3,2,1},
+                                    {1,3,4,8,0,5,7,2,6},
+                                    {1,3,4,8,6,2,0,7,5},
+                                    {3,6,4,0,1,2,8,7,5}
+					 			                    };
+void testCases(vector<vector<int>> values)
 {
 	cout <<"Tests " << endl;
-  for (size_t i = 0; i < testsNot.size(); i++)
+  for (size_t i = 0; i < values.size(); i++)
 	{
   	/* code */
 		auto s = std::make_shared<Solver>();
-		int ret = s->solve(testsNot[i]);
+		int ret = s->solve(values[i]);
 		cout <<"Search has :" <<( (ret)?"Succeed":"Failed") << endl;
 		// ok is 0
 		if (ret)
@@ -348,7 +342,7 @@ void testCases(void)
 		}
   }
 }
-void test(void)
+void testSimple(void)
 {
   vector<int> val {1,8,2,0,4,3,7,6,5};
   auto s = std::make_shared<Solver>();
@@ -360,8 +354,12 @@ void test(void)
     s->display_results();
   }
 }
+
 int main(int argc, char const *argv[]) {
-  /* code */
-  testCases();
+
+  // testSimple();
+  // testCases(testsOdd);
+  // testCases(testsEven);
+  testCases(testsOther);
   return 0;
 }

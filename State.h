@@ -30,6 +30,7 @@ enum class Move
     RIGHT
 };
 
+
 class State
 {
 
