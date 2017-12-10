@@ -4,7 +4,7 @@
 #define SOLVER__H
 
 /*
- * Solver for 8 puwwle game
+ * Solver for 8 puzzle game
  * Uses classes List and State to do so
  * Provides two methods BFS or DFS
  */
@@ -19,11 +19,6 @@
 using std::vector;
 
 
-// enum class Algorithm
-// {
-// 	BFS,
-// 	DFS
-// };
 class Solver
 {
 private:

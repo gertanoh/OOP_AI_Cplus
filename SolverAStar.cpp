@@ -2,115 +2,17 @@
 #include <vector>
 #include <deque>
 #include <unordered_set>
-#include <memory>
-#include <queue>
 #include <limits>
 #include <utility>
 #include <chrono>
 #include <string>
-#include "../State.h"
-#include "../List.h"
-
-using std::priority_queue;
-using std::unordered_multiset;
+#include "State.h"
+#include "List.h"
+#include "Fringe.h"
 using std::ostream;
 using std::cout;
 using std::endl;
-
-
-struct QueueCompare
-{
-  bool operator() (const StatePtr &s1, const StatePtr &s2) const
-  {
-    return (s1->getHeuristic() > s2->getHeuristic() );
-  }
-};
-
-class FringeA
-{
-private:
-
-    // store pointers to objects
-    /* Object should be create on heap */
-    priority_queue<StatePtr, std::vector<StatePtr>,
-          QueueCompare> m_states;
-    unordered_multiset<StatePtr, StateHasher,
-        StateComparator > m_indexStates;
-
-    int m_max_level_reached;
-
-public:
-
-    // default and empty constructor
-    FringeA(): m_max_level_reached(0)
-    {
-    };
-
-    // no copy constructor and assignment constructor
-    FringeA (const List&) = delete;
-    FringeA& operator=(const List&) = delete;
-
-    // ~List();
-    /*
-     * check if node alredy present in list
-     */
-    bool find(const StatePtr& s) const
-    {
-        return (m_indexStates.find(s) != m_indexStates.end() );
-    }
-    bool insert(const StatePtr& s)
-    {
-        // update depth of list
-        bool ret = false;
-        if (s->getLevel() > m_max_level_reached)
-        {
-            m_max_level_reached = s->getLevel() ;
-        }
-        // insert
-        m_indexStates.insert(s);
-        m_states.push(s);
-        return ret;
-
-    }
-    bool empty(void) const
-    {
-        return m_indexStates.empty();
-    };
-    int size(void) const
-    {
-        return m_states.size();
-    }
-    int getMaxDepth(void)
-    {
-      return m_max_level_reached;
-    }
-
-    StatePtr acquire(void)
-    {
-        /* It is okay as we transfer
-         * Ownership and pop right after
-         * TODO std::move
-         */
-        StatePtr s = m_states.top();
-        m_indexStates.erase(s);
-        m_states.pop();
-
-        return s;
-    }
-    int getPriority(const StatePtr& s)
-    {
-        auto iterators = m_indexStates.equal_range(s);
-        int min = std::numeric_limits<int>::max();
-        for (auto iter = iterators.first; iter != iterators.second; ++iter)
-        {
-            if (min < (*iter).get()->getHeuristic() )
-            {
-              min = (*iter).get()->getHeuristic();
-            }
-        }
-        return min;
-    }
-};
+using std::vector;
 
 
 
@@ -119,7 +21,7 @@ class Solver
 private:
 
 	/* data */
-	FringeA frontier;
+	Fringe frontier;
 	List explored;
 
 	/* data related to display after searched solved */
@@ -159,10 +61,7 @@ private:
     }
 
   }
-  /*
-   * Check if board is solvable
-   * count inversions
-   */
+
   int numInver(vector<int> values)
   {
       int inv_count = 0;
@@ -190,7 +89,7 @@ public:
 
 	// no copy constructor and
 	// assignment constructor
-	Solver (const Solver& ) = delete;
+  Solver (const Solver& ) = delete;
 	Solver& operator=(const Solver& ) = delete;
 	/* solve the search problem using alg */
   /*
@@ -209,10 +108,14 @@ public:
     int inv = numInver(values);
     if (inv%2 == 0)
     {
+      // set goal to reach
+      State::setGoal(Goal::STANDARD_GOAL);
       goal = {0,1,2,3,4,5,6,7,8};
     }
     else
     {
+      // set goal to reach
+      State::setGoal(Goal::NON_STANDARD_GOAL);
       goal = {1,2,3,8,0,4,7,6,5};
     }
 
@@ -221,12 +124,22 @@ public:
   	auto init = std::make_shared<State>(values);
   	// move it to frontier
   	frontier.insert(std::move(init));
+    #ifdef TEST
+    int i = 0;
+    while ( i++<1 && !solved )
+    #else
 		while ( (!frontier.empty()) && !solved )
+    #endif
   	{
   			// get front of frontier
   			auto acquired = frontier.acquire();
+        #ifdef TEST
+        cout <<"State pop heuristic score: " <<
+              acquired.get()->getHeuristic() <<endl;
+        #endif
   			// insert into explored
   			explored.insert(acquired);
+
   			// check if goal state
   			if ( (acquired.get()->getValues()) == goalState)
   			{
@@ -320,11 +233,13 @@ const vector<vector<int>> testsOdd {{1,2,3,8,0,4,7,6,5},
 					 			                    {2,8,1,4,6,3,0,7,5},
 													 			    {5,6,7,4,0,8,3,2,1}};
 
-const vector<vector<int>> testsOther {{8,6,7,2,5,4,3,0,1},
+const vector<vector<int>> testsOther {
+                                    {8,6,7,2,5,4,3,0,1},
 													 			    {6,4,7,8,5,0,3,2,1},
                                     {1,3,4,8,0,5,7,2,6},
                                     {1,3,4,8,6,2,0,7,5},
-                                    {3,6,4,0,1,2,8,7,5}
+                                    {3,6,4,0,1,2,8,7,5},
+                                    {7,2,4,5,0,6,8,3,1}
 					 			                    };
 void testCases(vector<vector<int>> values)
 {
@@ -359,7 +274,7 @@ int main(int argc, char const *argv[]) {
 
   // testSimple();
   // testCases(testsOdd);
-  // testCases(testsEven);
-  testCases(testsOther);
+  testCases(testsEven);
+  // testCases(testsOther);
   return 0;
 }

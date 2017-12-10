@@ -23,8 +23,9 @@ using std::string;
  * Implement mah
  */
 
-Solver::Solver(List_Type type): frontier(type), explored(List_Type::STACK),
-							m_search_depth(0),m_nodes_expanded(0), m_max_search_depth(0)
+Solver::Solver(List_Type type): frontier(type),
+							explored(List_Type::STACK),m_search_depth(0),
+							m_nodes_expanded(0), m_max_search_depth(0)
 {
 
 }
@@ -47,20 +48,12 @@ bool Solver::solve(vector<int> values)
 	// move it to frontier
 	frontier.insert(std::move(init));
 
-	#ifdef DEBUG
-		int i = 0;
-		while (i++ <4)
-	#else
-		while ( (!frontier.empty()) && !solved )
-	#endif
+	while ( (!frontier.empty()) && !solved )
 	{
 			// get front of frontier
 			auto acquired = frontier.acquire();
 			// insert into explored
 			explored.insert(acquired);
-			#ifdef DEBUG
-			cout <<"State pop: " << *(acquired.get()) << endl;
-			#endif
 			// check if goal state
 			if ( (acquired.get()->getValues()) == goalState)
 			{
@@ -75,13 +68,6 @@ bool Solver::solve(vector<int> values)
 				// ok is 0
 				if (!tmp_ret) {
 					// insert state into frontier
-					/*
-					 * TODO avoid code repetition
-					 * to respect the order
-					 * insert children in reverse to have
-					 * order from front to back
-					 * up, down, left, right
-					 */
 					if (frontier.getType() == List_Type::QUEUE)
 					{
 						for (size_t i = 0; i < children.size(); ++i) {
@@ -96,7 +82,8 @@ bool Solver::solve(vector<int> values)
 					}
 					else if (frontier.getType() == List_Type::STACK)
 					{
-						for (int i = children.size() -1; i>=0; --i) {
+						for (int i = children.size()-1; i>=0; --i)
+						{
 								auto state = std::make_shared<State>(
 									std::move(children[i].second), acquired->getLevel()+1,
 									children[i].first, acquired.get());
