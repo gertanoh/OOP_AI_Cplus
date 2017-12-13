@@ -50,64 +50,65 @@ bool Solver::solve(vector<int> values)
 
 	while ( (!frontier.empty()) && !solved )
 	{
-			// get front of frontier
-			auto acquired = frontier.acquire();
-			// insert into explored
-			explored.insert(acquired);
-			// check if goal state
-			if ( (acquired.get()->getValues()) == goalState)
+		// get front of frontier
+		auto acquired = frontier.acquire();
+		// insert into explored
+		explored.insert(acquired);
+		// check if goal state
+		if ( (acquired.get()->getValues()) == goalState)
+		{
+			solved = true;
+			ret = 0;
+		}
+		else
+		{
+			// expand the search
+			int tmp_ret = -1;
+			auto children = generateChildren(*acquired.get(), tmp_ret);
+			// ok is 0
+			if (!tmp_ret)
 			{
-				solved = true;
-				ret = 0;
-			}
-			else
-			{
-				// expand the search
-				int tmp_ret = -1;
-				auto children = generateChildren(*acquired.get(), tmp_ret);
-				// ok is 0
-				if (!tmp_ret) {
-					// insert state into frontier
-					if (frontier.getType() == List_Type::QUEUE)
+				// insert state into frontier
+				if (frontier.getType() == List_Type::QUEUE)
+				{
+					for (size_t i = 0; i < children.size(); ++i)
 					{
-						for (size_t i = 0; i < children.size(); ++i) {
-								auto state = std::make_shared<State>(
-									std::move(children[i].second), acquired->getLevel()+1,
-									children[i].first, acquired.get());
-								if (!frontier.find(state) && !explored.find(state) )
-								{
-									frontier.insert(std::move(state));
-								}
-						}
-					}
-					else if (frontier.getType() == List_Type::STACK)
-					{
-						for (int i = children.size()-1; i>=0; --i)
+						auto state = std::make_shared<State>(
+								std::move(children[i].second), acquired->getLevel()+1,
+								children[i].first, acquired.get());
+						if (!frontier.find(state) && !explored.find(state) )
 						{
-								auto state = std::make_shared<State>(
-									std::move(children[i].second), acquired->getLevel()+1,
-									children[i].first, acquired.get());
-								if (!frontier.find(state) && !explored.find(state) )
-								{
-									frontier.insert(std::move(state));
-								}
+							frontier.insert(std::move(state));
 						}
 					}
-					else
+				}
+				else if (frontier.getType() == List_Type::STACK)
+				{
+					for (int i = children.size()-1; i>=0; --i)
 					{
-						cout <<"Undefined Type of frontier list " << endl;
-						ret = -1;
-						solved = false;
+						auto state = std::make_shared<State>(
+								std::move(children[i].second), acquired->getLevel()+1,
+								children[i].first, acquired.get());
+						if (!frontier.find(state) && !explored.find(state) )
+						{
+							frontier.insert(std::move(state));
+						}
 					}
-
 				}
 				else
 				{
-					cout <<"Error in generateChildren" << endl;
-					solved = false;
+					cout <<"Undefined Type of frontier list " << endl;
 					ret = -1;
+					solved = false;
 				}
 			}
+			else
+			{
+				cout <<"Error in generateChildren" << endl;
+				solved = false;
+				ret = -1;
+			}
+		}
 	}
 	// stop chrono
 	auto end = std::chrono::system_clock::now();

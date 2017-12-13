@@ -104,7 +104,7 @@ void testCases(vector<vector<int>> values)
 }
 void testSimple(void)
 {
-  vector<int> val {1,8,2,0,4,3,7,6,5};
+	vector<int> val {1,8,2,0,4,3,7,6,5};
   auto s = std::make_shared<Solver<Fringe>>();
   int ret = s->solve(val);
   cout <<"Search has :" <<( (ret)?"Succeed":"Failed") << endl;

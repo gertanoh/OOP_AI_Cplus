@@ -40,24 +40,24 @@ bool List::insert(const StatePtr& s)
   bool ret = false;
   if (s->getLevel() > m_max_level_reached)
   {
-      m_max_level_reached = s->getLevel() ;
+    m_max_level_reached = s->getLevel() ;
   }
   // insert
   m_indexStates.insert(s);
   if (m_type == List_Type::STACK )
   {
-      // possibility to use std::move
-      m_states.push_front(s);
-      ret = true;
+    // possibility to use std::move
+    m_states.push_front(s);
+    ret = true;
   }
   else if( m_type == List_Type::QUEUE )
   {
-      m_states.push_back(s);
-      ret = true;
+    m_states.push_back(s);
+    ret = true;
   }
   else
   {
-      cout <<"Error, unexpected behaviour in insert from type of list " << endl;
+    cout <<"Error, unexpected behaviour in insert from type of list " << endl;
   }
   return ret;
 
@@ -107,7 +107,7 @@ ostream& operator<< (ostream &out, const List &l)
   out <<"List size is " << size << std::endl;
   for (int i = 0 ; i <size; ++i)
   {
-      out<<"State:"<< *(l.getStates()[i]).get();
+    out<<"State:"<< *(l.getStates()[i]).get();
   }
   return out;
 };

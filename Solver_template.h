@@ -163,7 +163,7 @@ template<>
 bool Solver<List>::solve(vector<int> values)
 {
 
-  auto start = std::chrono::system_clock::now();
+	auto start = std::chrono::system_clock::now();
   int ret = 0;
   vector<int> goal;
   // get inversion to know which goal state can be reached
@@ -287,10 +287,10 @@ int Solver<T>::numInver(vector<int> values)
    for (int j = i+1; j < 9; j++)
    {
      // Value 0 is used for empty space
-     if (values[j] && values[i] &&  values[i] > values[j])
-     {
+		if (values[j] && values[i] &&  values[i] > values[j])
+    {
        inv_count++;
-     }
+    }
    }
   }
 

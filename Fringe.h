@@ -28,14 +28,14 @@ class Fringe
 {
 private:
 
-   // store pointers to objects
-   /* Object should be create on heap */
-   priority_queue<StatePtr, std::vector<StatePtr>,
-         QueueCompare> m_states;
-   unordered_multiset<StatePtr, StateHasher,
-       StateComparator > m_indexStates;
+ // store pointers to objects
+ /* Object should be create on heap */
+ priority_queue<StatePtr, std::vector<StatePtr>,
+       QueueCompare> m_states;
+ unordered_multiset<StatePtr, StateHasher,
+     StateComparator > m_indexStates;
 
-   int m_max_level_reached;
+ int m_max_level_reached;
 
 public:
   Fringe();
